@@ -4,7 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
-public class Comentario {
+public class Comentario extends DomainEntity {
 	@NotBlank
 	private String texto;
 	
