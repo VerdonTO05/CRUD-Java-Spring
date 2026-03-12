@@ -46,4 +46,9 @@ public class ArticuloController {
 		articuloService.save(a);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
+
+	@PostMapping("/{id}")
+	public ResponseEntity<String> update(@RequestBody Articulo a, @RequestBody int id){
+		
+	}
 }
