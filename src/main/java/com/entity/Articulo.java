@@ -12,7 +12,7 @@ public class Articulo extends DomainEntity {
 	@NotBlank
 	private String titulo;
 	@NotBlank
-	private String desc;
+	private String descripcion;
 	@NotBlank
 	private String fecha;
 	
@@ -33,11 +33,11 @@ public class Articulo extends DomainEntity {
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
 	}
-	public String getDesc() {
-		return desc;
+	public String getDescripcion() {
+		return descripcion;
 	}
-	public void setDesc(String desc) {
-		this.desc = desc;
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
 	}
 	public String getFecha() {
 		return fecha;

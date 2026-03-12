@@ -30,7 +30,7 @@ public class ArticuloService {
 		if(findOne(id).isPresent()) {
 			Articulo articuloBd = findOne(id).get();
 			articuloBd.setTitulo(a.getTitulo());
-			articuloBd.setDesc(a.getDesc());
+			articuloBd.setDescripcion(a.getDescripcion());
 			articuloBd.setFecha(a.getFecha());
 			return articuloRepository.save(articuloBd);
 		}else {
