@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,8 +48,16 @@ public class ArticuloController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@PostMapping("/{id}")
-	public ResponseEntity<String> update(@RequestBody Articulo a, @RequestBody int id){
+	@PutMapping("/{id}")
+	public ResponseEntity<String> update(@RequestBody Articulo a, @PathVariable int id){
+		Optional<Articulo> a1 = articuloService.findOne(id);
 		
+		if(a1.isPresent()) {
+			a.setId(id);
+			articuloService.save(a);
+			return ResponseEntity.status(HttpStatus.OK).build();
+		}else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
 	}
 }
