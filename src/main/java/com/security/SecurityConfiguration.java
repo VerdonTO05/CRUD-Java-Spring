@@ -42,35 +42,12 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                 // Rutas públicas
                 .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/visitante").permitAll()
                 .requestMatchers(HttpMethod.GET, "/actorLogin").permitAll()
-                .requestMatchers(HttpMethod.POST, "/chef").permitAll()
-                .requestMatchers(HttpMethod.POST, "/cliente").permitAll()
-                .requestMatchers(HttpMethod.GET, "/chef/listadoActivos").permitAll()
-                .requestMatchers(HttpMethod.GET, "/chef/*").permitAll()
-                .requestMatchers("/noticia", "/noticia/**").permitAll()
-                // Rutas ADMINISTRADOR
-                .requestMatchers("/admin/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/chef").hasAuthority("ADMINISTRADOR")
-                .requestMatchers(HttpMethod.GET, "/cliente", "/cliente/*").hasAuthority("ADMINISTRADOR")
-                .requestMatchers(HttpMethod.PUT, "/banear/**").hasAuthority("ADMINISTRADOR")
-                .requestMatchers(HttpMethod.PUT, "/desbanear/**").hasAuthority("ADMINISTRADOR")
-                // Rutas CHEF
-                .requestMatchers(HttpMethod.PUT, "/chef").hasAuthority("CHEF")
-                .requestMatchers(HttpMethod.DELETE, "/chef").hasAuthority("CHEF")
-                .requestMatchers("/chef/miPerfil", "/chef/activar", "/chef/desactivar").hasAuthority("CHEF")
-                .requestMatchers("/servicio/misServiciosChef").hasAuthority("CHEF")
-                // Rutas CLIENTE
-                .requestMatchers(HttpMethod.PUT, "/cliente").hasAuthority("CLIENTE")
-                .requestMatchers(HttpMethod.DELETE, "/cliente").hasAuthority("CLIENTE")
-                .requestMatchers("/cliente/miPerfil").hasAuthority("CLIENTE")
-                .requestMatchers("/servicio/contratar/**").hasAuthority("CLIENTE")
-                .requestMatchers("/servicio/puntuar/**").hasAuthority("CLIENTE")
-                .requestMatchers("/servicio/misServiciosCliente").hasAuthority("CLIENTE")
-                // Rutas SWAGGER
-                .requestMatchers("/v3/api-docs/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/actor").hasAnyAuthority("VISITANTE")
                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**").permitAll()
                 // Resto de rutas requieren autenticación
-                .anyRequest().authenticated());
+                .anyRequest().permitAll());
         http.addFilterBefore(JWTAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

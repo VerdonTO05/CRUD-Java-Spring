@@ -35,11 +35,9 @@ public class JWTUtils {
     @Lazy
     private RedactorService redactorService;
 
-    @Value("${jwt.secret}")
-    private String JWT_FIRMA;
+    private String JWT_FIRMA = "1234";
 
-    @Value("${jwt.expiration}")
-    private long EXTENCION_TOKEN;
+    private long EXTENCION_TOKEN = 86000000;
 
     public String getToken(HttpServletRequest request) {
         String tokenBearer = request.getHeader("Authorization");
