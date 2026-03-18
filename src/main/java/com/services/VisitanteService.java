@@ -21,6 +21,10 @@ public class VisitanteService {
 	public Optional<Visitante> findOne(int id) {
 		return visitantesRepository.findById(id);
 	}
+	
+	public Optional<Visitante> findByUsername(String nombre){
+		return visitantesRepository.findByUsername(nombre);
+	}
 
 	public Visitante save(Visitante a) {
 		return visitantesRepository.save(a);

@@ -21,7 +21,9 @@ public class ActorService {
 	public Optional<Actor> findOne(int id) {
 		return actorRepository.findById(id);
 	}
-	
+	public Optional<Actor> findByUsername(String nombre){
+		return actorRepository.findByUsername(nombre);
+	}
 	public Actor save(Actor a) {
 		return actorRepository.save(a);
 	}

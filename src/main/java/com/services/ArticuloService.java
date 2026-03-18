@@ -22,6 +22,10 @@ public class ArticuloService {
 		return articuloRepository.findById(id);
 	}
 	
+	public Optional<Articulo> findByUsername(String nombre){
+		return articuloRepository.findByUsername(nombre);
+	}
+	
 	public Articulo save(Articulo a) {
 		return articuloRepository.save(a);
 	}

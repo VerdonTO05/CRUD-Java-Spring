@@ -21,6 +21,10 @@ public class RedactorService {
 	public Optional<Redactor> findOne(int id) {
 		return redactorRepository.findById(id);
 	}
+	
+	public Optional<Redactor> findByUsername(String nombre){
+		return redactorRepository.findByUsername(nombre);
+	}
 
 	public Redactor save(Redactor a) {
 		return redactorRepository.save(a);
