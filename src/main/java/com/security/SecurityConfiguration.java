@@ -22,57 +22,82 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    @Autowired
-    private JWTAuthenticationFilter JWTAuthenticationFilter;
+	@Autowired
+	private JWTAuthenticationFilter JWTAuthenticationFilter;
 
-    @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration authConf) throws Exception {
-        return authConf.getAuthenticationManager();
-    }
+	@Bean
+	AuthenticationManager authenticationManager(AuthenticationConfiguration authConf) throws Exception {
+		return authConf.getAuthenticationManager();
+	}
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth -> auth
-                // Rutas públicas
-                .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/visitante").permitAll()
-                .requestMatchers(HttpMethod.GET, "/actorLogin").permitAll()
-                .requestMatchers(HttpMethod.GET,"/actor").hasAnyAuthority("VISITANTE")
-                .requestMatchers("/swagger-ui.html", "/swagger-ui/**").permitAll()
-                // Resto de rutas requieren autenticación
-                .anyRequest().permitAll());
-        http.addFilterBefore(JWTAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	    http.csrf(csrf -> csrf.disable())
+	        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+	        .authorizeHttpRequests(auth -> auth
+	        		//Rutas publicas
+		            .requestMatchers(HttpMethod.POST, "/actor/visitante").anonymous()
+		            .requestMatchers(HttpMethod.GET, "/articulo", "/articulo/**").anonymous()
 
-        return http.build();
-    }
+		            //Rutas Registrado
+		            .requestMatchers(HttpMethod.PUT, "/actor").hasAnyAuthority("VISITANTE", "REDACTOR")
+		            .requestMatchers(HttpMethod.DELETE, "/actor").hasAnyAuthority("VISITANTE", "REDACTOR")
+		            .requestMatchers(HttpMethod.GET, "/comentario/**").hasAnyAuthority("VISITANTE", "REDACTOR")
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+		            //Rutas Usuario Registrado como visitantes
+		           
+		            .requestMatchers(HttpMethod.PUT, "/comentario/**").hasAnyAuthority("VISITANTE")
+		            .requestMatchers(HttpMethod.DELETE, "/comentario/**").hasAnyAuthority("VISITANTE")
+		            .requestMatchers(HttpMethod.POST, "/comentario/**").hasAnyAuthority("VISITANTE")
 
-        // Permitir peticiones solo desde este origen (frontend)
-        configuration.setAllowedOriginPatterns(List.of("*"));
+		          //Rutas Usuario Registrado como Redactor
+		            .requestMatchers(HttpMethod.PUT, "/articulo/**").hasAnyAuthority("REDACTOR")
+		            .requestMatchers(HttpMethod.DELETE, "/articulo/**").hasAnyAuthority("REDACTOR")
+		            .requestMatchers(HttpMethod.POST, "/articulo").hasAnyAuthority("REDACTOR")
+		            
+		            .requestMatchers(HttpMethod.GET, "/actor/allUsers").hasAnyAuthority("REDACTOR")
+		            .requestMatchers(HttpMethod.PUT, "/articulo/*/ban").hasAnyAuthority("REDACTOR")
+		            .requestMatchers(HttpMethod.PUT, "/articulo/*/unban").hasAnyAuthority("REDACTOR")
 
-        // Permitir estos métodos HTTP
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // Permitir estas cabeceras en las peticiones
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 
-        // Permitir enviar cookies o credenciales en las peticiones
-        configuration.setAllowCredentials(true);
+		            
+	            .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
-        // Asociar esta configuración a todas las rutas (/**)
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+	            .anyRequest().authenticated() 
+	        );
 
-        return source;
-    }
+	    // Equipamos el filtro del JWT antes del filtro por defecto de Spring
+	    http.addFilterBefore(JWTAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+	    return http.build();
+	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+
+		// Permitir peticiones solo desde este origen (frontend)
+		configuration.setAllowedOriginPatterns(List.of("*"));
+
+		// Permitir estos métodos HTTP
+		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+		// Permitir estas cabeceras en las peticiones
+		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+
+		// Permitir enviar cookies o credenciales en las peticiones
+		configuration.setAllowCredentials(true);
+
+		// Asociar esta configuración a todas las rutas (/**)
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+
+		return source;
+	}
 }

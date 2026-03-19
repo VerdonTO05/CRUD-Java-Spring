@@ -33,6 +33,7 @@ public class ActorController {
 	private AuthenticationManager authenticationManager;
 	@Autowired
 	private JWTUtils JWTUtils;
+
 	@GetMapping
 	public ResponseEntity<List<Actor>> findAll() {
 		return ResponseEntity.ok(actorService.findAll());
@@ -41,7 +42,7 @@ public class ActorController {
 	@PostMapping("/login")
 	public ResponseEntity<String> login(@RequestBody ActorLogin actorLogin) {
 		try {
-			
+
 			Authentication authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(actorLogin.getUsername(), actorLogin.getPassword()));
 
@@ -72,28 +73,17 @@ public class ActorController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<String> update(@RequestBody Actor a, @PathVariable int id) {
-		Optional<Actor> a1 = actorService.findOne(id);
-
-		if (a1.isPresent()) {
-			a.setId(id);
-			actorService.save(a);
-			return ResponseEntity.status(HttpStatus.OK).build();
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
+	@PutMapping()
+	public ResponseEntity<String> update(@RequestBody Actor a) {
+		Actor a1 = JWTUtils.userLogin();
+		actorService.update(a, a1.getId());
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<String> delete(@PathVariable int id) {
-		Optional<Actor> a = actorService.findOne(id);
-
-		if (a.isPresent()) {
-			actorService.delete(id);
-			return ResponseEntity.status(HttpStatus.OK).build();
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
+	@DeleteMapping()
+	public ResponseEntity<String> delete() {
+		Actor a1 = JWTUtils.userLogin();
+		actorService.delete(a1.getId());
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }

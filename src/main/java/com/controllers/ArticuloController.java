@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.entity.Articulo;
+import com.entity.Redactor;
+import com.security.JWTUtils;
 import com.services.ArticuloService;
+import com.services.RedactorService;
 
 
 
@@ -24,9 +27,13 @@ import com.services.ArticuloService;
 @RequestMapping("/articulo")
 public class ArticuloController {
 	@Autowired
-
 	private ArticuloService articuloService;
 	
+	@Autowired
+	private RedactorService RedactorService;
+	
+	@Autowired
+	private JWTUtils JWTUtils;
 	@GetMapping
 	public ResponseEntity<List<Articulo>> findAll(){
 		return ResponseEntity.ok(articuloService.findAll());
@@ -45,7 +52,10 @@ public class ArticuloController {
 	}
 	@PostMapping
 	public ResponseEntity<String> save(@RequestBody Articulo a){
-		articuloService.save(a);
+		Redactor r1 = JWTUtils.userLogin();
+		Articulo a1 = articuloService.save(a);
+		r1.getArticulos().add(a1);
+		RedactorService.save(r1);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
