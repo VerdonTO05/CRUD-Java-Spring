@@ -43,18 +43,18 @@ public class ComentarioController {
 	}
 
 	@PostMapping
-	public ResponseEntity<String> save(@RequestBody Comentario a) {
-		comentarioService.save(a);
+	public ResponseEntity<String> save(@RequestBody Comentario a,@PathVariable int idArticulo) {
+		comentarioService.save(a,idArticulo);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<String> update(@RequestBody Comentario a, @PathVariable int id) {
-		Optional<Comentario> a1 = comentarioService.findOne(id);
+	public ResponseEntity<String> update(@RequestBody Comentario a, @PathVariable int idArticulo) {
+		Optional<Comentario> a1 = comentarioService.findOne(idArticulo);
 
 		if (a1.isPresent()) {
-			a.setId(id);
-			comentarioService.save(a);
+			a.setId(idArticulo);
+			comentarioService.save(a,idArticulo);
 			return ResponseEntity.status(HttpStatus.OK).build();
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
